@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7 JEK - Transportasi & Delivery</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+        }
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: #ffffff;
+            min-height: 100vh;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 15px 0;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .header h1 {
+            color: #d90429;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        .services {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .service-card {
+            border: 2px solid #eee;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            width: 30%;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .service-card.active {
+            border-color: #d90429;
+            background-color: #fff0f3;
+        }
+        .service-card h3 {
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .price-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .price-box span {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2b2d42;
+        }
+        .btn-order {
+            width: 100%;
+            background-color: #d90429;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-order:hover {
+            background-color: #ef233c;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <h1>7 JEK</h1>
+        <p>Cepat, Murah & Terpercaya</p>
+    </div>
+
+    <!-- Pilihan Layanan -->
+    <div class="services">
+        <div class="service-card active" onclick="selectService('7-Ride', 3000)">
+            ??
+            <h3>7-Ride</h3>
+        </div>
+        <div class="service-card" onclick="selectService('7-Send', 4000)">
+            ??
+            <h3>7-Send</h3>
+        </div>
+        <div class="service-card" onclick="selectService('7-Food', 5000)">
+            ??
+            <h3>7-Food</h3>
+        </div>
+    </div>
+
+    <!-- Form Pemesanan -->
+    <div class="form-group">
+        <label>Lokasi Penjemputan / Pengambilan</label>
+        <input type="text" id="pickup" placeholder="Masukkan lokasi jemput">
+    </div>
+
+    <div class="form-group">
+        <label>Lokasi Tujuan</label>
+        <input type="text" id="destination" placeholder="Masukkan lokasi tujuan">
+    </div>
+
+    <div class="form-group">
+        <label>Estimasi Jarak (KM)</label>
+        <input type="number" id="distance" value="2" min="1" oninput="calculatePrice()">
+    </div>
+
+    <!-- Total Biaya -->
+    <div class="price-box">
+        <p>Total Estimasi Biaya:</p>
+        <span id="total-price">Rp 6.000</span>
+    </div>
+
+    <!-- Tombol Pesan -->
+    <button class="btn-order" onclick="submitOrder()">Pesan 7 JEK Sekarang</button>
+</div>
+
+<script>
+    let selectedService = '7-Ride';
+    let baseRate = 3000; // Tarif dasar per KM
+
+    function selectService(serviceName, rate) {
+        selectedService = serviceName;
+        baseRate = rate;
+        
+        // Atur tampilan tombol aktif
+        let cards = document.querySelectorAll('.service-card');
+        cards.forEach(card => card.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+
+        calculatePrice();
+    }
+
+    function calculatePrice() {
+        let distance = document.getElementById('distance').value || 1;
+        let total = distance * baseRate;
+        document.getElementById('total-price').innerText = 'Rp ' + total.toLocaleString('id-ID');
+    }
+
+    function submitOrder() {
+        let pickup = document.getElementById('pickup').value;
+        let destination = document.getElementById('destination').value;
+        let distance = document.getElementById('distance').value;
+        let price = document.getElementById('total-price').innerText;
+
+        if (!pickup || !destination) {
+            alert('Harap isi lokasi jemput dan lokasi tujuan!');
+            return;
+        }
+
+        // Format pesan ke sistem / driver via WhatsApp
+        let message = `*PESANAN BARU 7 JEK*%0A` +
+                      `Layanan: ${selectedService}%0A` +
+                      `Jemput: ${pickup}%0A` +
+                      `Tujuan: ${destination}%0A` +
+                      `Jarak: ${distance} KM%0A` +
+                      `Total Biaya: ${price}`;
+
+        // Ganti nomor dibawah ini dengan nomor WhatsApp Dispatcher/Admin 7 JEK
+        let adminPhone = '62895393958111'; 
+
+        window.open(`https://wa.me/${adminPhone}?text=${message}`, '_blank');
+    }
+</script>
+
+</body>
+</html>
